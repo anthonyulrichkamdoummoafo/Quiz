@@ -80,15 +80,11 @@ legend{font-weight:600;padding:0 6px;max-width:100%}
     <p class="muted" id="rmeta"></p>
     <div class="card" style="margin:18px 0 26px">
       <h2>Send your result to your teacher</h2>
-      <p>Tap <b>Copy full result</b>, then paste it into WhatsApp or an email to your teacher. The other buttons also try to open those apps for you, but some browsers block them. Nothing is delivered until you press send.</p>
+      <p>Tap the button below. Your email app opens with your full result ready to send to your teacher. Press send in your email app to deliver it.</p>
       <div class="msg" id="rmsg"></div>
       <div class="row">
-        <button type="button" id="cp">Copy full result</button>
-        <a class="btn" id="wa" href="#" target="_blank" rel="noopener" style="background:#128c4a;color:#fff">Send on WhatsApp</a>
-        <a class="btn" id="em" href="#" target="_blank" rel="noopener">Send by email</a>
-        <a class="btn" id="gm" href="#" target="_blank" rel="noopener" style="background:transparent;color:var(--fg);border:1.5px solid var(--line)">Open in Gmail on the web</a>
+        <a class="btn" id="em" href="#">Send result by email</a>
       </div>
-      <p class="muted" id="cstat" role="status" style="margin:12px 0 0"></p>
     </div>
     <h2>Review your answers</h2>
     <div id="review"></div>
@@ -97,7 +93,6 @@ legend{font-weight:600;padding:0 6px;max-width:100%}
 
 <script>
 const TIME_LIMIT_MIN = 10;
-const TEACHER_NUMBER = "237672770525";
 const TEACHER_EMAIL = "anthonyulrichkamdoummoafo@gmail.com";
 const QUIZ_TITLE = "Basic HTML Quiz";
 
@@ -183,7 +178,7 @@ function finish(auto){
   const lines = [QUIZ_TITLE, "Name: " + name, "Score: " + score + "/" + n + " (" + pct + "%)", "Time used: " + fmt(used) + (auto ? " (time ran out)" : ""), "Topics missed: " + (missed.length ? missed.join(", ") : "none")];
   const msg = lines.join("\n");
   $("rmsg").textContent = msg;
-  $("wa").href = "https://wa.me/" + TEACHER_NUMBER + "?text=" + encodeURIComponent(msg);
+  
   const subj = QUIZ_TITLE + " result: " + name;
   const det = items.map((it, qi) => {
     const picked = it.pick >= 0 ? it.opts[it.pick].t : "(no answer)";
@@ -192,7 +187,7 @@ function finish(auto){
   }).join("\n\n");
   const body = msg + "\n\nQuestion by question:\n\n" + det;
   $("em").href = "mailto:" + TEACHER_EMAIL + "?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body);
-  $("gm").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(TEACHER_EMAIL) + "&su=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body);
+  
   window.lastBody = body;
   $("rmsg").textContent = body;
   const rv = $("review");
@@ -213,17 +208,7 @@ function finish(auto){
   window.scrollTo(0,0);
 }
 
-function copyResult(){
-  const t = window.lastBody || ""; let ok = false;
-  try{
-    const ta = document.createElement("textarea");
-    ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-    document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy"); document.body.removeChild(ta);
-  }catch(e){}
-  $("cstat").textContent = ok ? "Result copied. Paste it into WhatsApp or your email, then press send." : "Copy was blocked. Select the text in the box above, copy it, and paste it into WhatsApp or your email.";
-}
-$("cp").addEventListener("click", copyResult);
-["wa", "em", "gm"].forEach(id => $(id).addEventListener("click", copyResult));
+
 $("go").addEventListener("click", begin);
 $("name").addEventListener("keydown", e => { if(e.key === "Enter") begin(); });
 </script>
