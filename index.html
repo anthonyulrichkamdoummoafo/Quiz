@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Basic HTML Quiz</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#f4f7fc;--fg:#14213d;--muted:#58647f;--card:#ffffff;--line:#d5ddef;--accent:#2f5bff;--accent-fg:#ffffff;--ok:#0b7d52;--okbg:#e2f4eb;--bad:#b42323;--badbg:#fdeaea;--code:#e9eefb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1424;--fg:#e8edfa;--muted:#9aa6c4;--card:#172038;--line:#2a3658;--accent:#6c8bff;--accent-fg:#0e1424;--ok:#4fd39a;--okbg:#12342a;--bad:#ff8a8a;--badbg:#3a1d22;--code:#202b4a}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1424;--fg:#e8edfa;--muted:#9aa6c4;--card:#172038;--line:#2a3658;--accent:#6c8bff;--accent-fg:#0e1424;--ok:#4fd39a;--okbg:#12342a;--bad:#ff8a8a;--badbg:#3a1d22;--code:#202b4a}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 17px/1.55 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:2rem;line-height:1.15;margin:8px 0 12px;font-weight:700}
+h2{font-size:1.3rem;margin:0 0 8px}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+code{font:500 .88em "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;background:var(--code);padding:1px 6px;border-radius:5px;overflow-wrap:anywhere}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+label.f{display:block;font-weight:600;margin-bottom:6px}
+input[type=text]{width:100%;font:inherit;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.facts{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 20px;padding:0;list-style:none}
+.facts li{border:1.5px solid var(--line);border-radius:8px;padding:6px 12px;font-weight:600}
+button,a.btn{display:inline-block;font:600 1rem "IBM Plex Sans",system-ui,sans-serif;background:var(--accent);color:var(--accent-fg);border:0;border-radius:8px;padding:13px 22px;cursor:pointer;text-decoration:none}
+button.alt{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.err{color:var(--bad);min-height:1.4em;margin:8px 0 0;font-weight:600}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:11;background:var(--card);border-bottom:1px solid var(--line)}
+.bar-in{max-width:640px;margin:0 auto;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.clock{font:500 1.7rem/1 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.clock.warn{color:var(--bad)}
+.track{height:5px;background:var(--line)}
+.track i{display:block;height:100%;width:0;background:var(--accent)}
+.track i.warn{background:var(--bad)}
+fieldset{border:1px solid var(--line);background:var(--card);border-radius:12px;margin:0 0 16px;padding:16px 18px 10px;min-width:0}
+legend{font-weight:600;padding:0 6px;max-width:100%}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;margin:0 0 8px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--accent);background:var(--code)}
+.opt input{margin-top:5px;accent-color:var(--accent);flex:none}
+.score{font-size:3.4rem;font-weight:700;line-height:1;margin:4px 0 6px}
+.rev{border-left:5px solid var(--line);background:var(--card);border-radius:0 10px 10px 0;padding:12px 16px;margin:0 0 12px}
+.rev.ok{border-left-color:var(--ok)}
+.rev.no{border-left-color:var(--bad)}
+.rev b.ok{color:var(--ok)}
+.rev b.no{color:var(--bad)}
+.rev p{margin:0 0 6px}
+.msg{white-space:pre-wrap;background:var(--code);border-radius:8px;padding:12px 14px;font:500 .85rem/1.5 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;margin:0 0 14px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="bar" id="bar" hidden>
+  <div class="bar-in"><span id="progress" class="muted">0 of 8 answered</span><span id="clock" class="clock" role="timer" aria-live="off">10:00</span></div>
+  <div class="track"><i id="fill"></i></div>
+</header>
+<main>
+  <section id="start">
+    <h1>Basic HTML quiz</h1>
+    <p class="muted">Based on the freeCodeCamp Basic HTML module. Answer on your own, with no notes or help.</p>
+    <ul class="facts"><li id="f1">8 questions</li><li id="f2">10 minutes</li><li>One attempt</li></ul>
+    <div class="card">
+      <label class="f" for="name">Your full name</label>
+      <input type="text" id="name" autocomplete="name" placeholder="e.g. Marie Nguema">
+      <p class="err" id="err" role="alert"></p>
+      <button id="go" type="button">Start the quiz</button>
+    </div>
+    <p class="muted" style="margin-top:14px">The timer starts as soon as you tap the button. When time runs out, your answers are submitted automatically.</p>
+  </section>
+
+  <form id="quiz" hidden onsubmit="return false"></form>
+
+  <section id="result" hidden>
+    <h1 id="rtitle">Quiz finished</h1>
+    <div class="score" id="rscore"></div>
+    <p class="muted" id="rmeta"></p>
+    <div class="card" style="margin:18px 0 26px">
+      <h2>Send your result to your teacher</h2>
+      <p>Tap <b>Copy full result</b>, then paste it into WhatsApp or an email to your teacher. The other buttons also try to open those apps for you, but some browsers block them. Nothing is delivered until you press send.</p>
+      <div class="msg" id="rmsg"></div>
+      <div class="row">
+        <button type="button" id="cp">Copy full result</button>
+        <a class="btn" id="wa" href="#" target="_blank" rel="noopener" style="background:#128c4a;color:#fff">Send on WhatsApp</a>
+        <a class="btn" id="em" href="#" target="_blank" rel="noopener">Send by email</a>
+        <a class="btn" id="gm" href="#" target="_blank" rel="noopener" style="background:transparent;color:var(--fg);border:1.5px solid var(--line)">Open in Gmail on the web</a>
+      </div>
+      <p class="muted" id="cstat" role="status" style="margin:12px 0 0"></p>
+    </div>
+    <h2>Review your answers</h2>
+    <div id="review"></div>
+  </section>
+</main>
+
+<script>
+const TIME_LIMIT_MIN = 10;
+const TEACHER_NUMBER = "237672770525";
+const TEACHER_EMAIL = "anthonyulrichkamdoummoafo@gmail.com";
+const QUIZ_TITLE = "Basic HTML Quiz";
+
+const Q = [
+ {t:"HTML boilerplate", q:`What should appear on the very first line of an HTML5 document?`, o:[`<html lang="en">`,`<!DOCTYPE html>`,`<head>`,`<meta charset="UTF-8">`], a:1, e:`The <!DOCTYPE html> declaration tells the browser to render the page as HTML5. It comes before the <html> element.`},
+ {t:"title element", q:`Where does the <title> element belong?`, o:[`Inside the <body>, at the top`,`Inside the <footer>`,`Inside the <head>`,`Before the <!DOCTYPE html>`], a:2, e:`The <title> goes inside <head>. It sets the text shown in the browser tab and in search results.`},
+ {t:"alt attribute", q:`What is the purpose of the alt attribute on an <img> element?`, o:[`It sets the width of the image`,`It links the image to another page`,`It makes the image load faster`,`It gives a text description for screen readers and for when the image fails to load`], a:3, e:`Alt text describes the image for screen reader users, shows if the image cannot load, and helps search engines understand it.`},
+ {t:"void elements", q:`Which of these elements does NOT need a closing tag?`, o:[`<img>`,`<p>`,`<a>`,`<h1>`], a:0, e:`<img> is a void element: it has no content between tags, so it has no closing tag. <p>, <a> and <h1> wrap content and need one.`},
+ {t:"links", q:`Which attribute makes a link open in a new browser tab?`, o:[`href="_blank"`,`target="_blank"`,`rel="newtab"`,`open="new"`], a:1, e:`Adding target="_blank" to an <a> element opens the link in a new tab. The href attribute holds the destination URL.`},
+ {t:"audio element", q:`You add <audio src="song.mp3"></audio> to your page, but nothing visible appears. What is missing?`, o:[`The controls attribute`,`A <play> element`,`An alt attribute`,`A closing </html> tag`], a:0, e:`Without the controls attribute, the browser shows no play, pause or volume buttons.`},
+ {t:"iframe", q:`Which element is used to embed another web page (such as a video player or map) inside your page?`, o:[`<embedpage>`,`<frame>`,`<iframe>`,`<object-link>`], a:2, e:`<iframe> embeds an external page or resource inside your page. Its src attribute points to the content.`},
+ {t:"semantic HTML and SEO", q:`Why is it better to use semantic elements like <header>, <main> and <footer> instead of generic containers everywhere?`, o:[`They make the page load faster`,`They add colors and layout automatically`,`They are required for the page to display`,`They describe the page structure to search engines and assistive technologies`], a:3, e:`Semantic elements give meaning to each part of the page, which helps search engines and screen readers. They add no styling and do not change speed.`}
+];
+
+const $ = id => document.getElementById(id);
+const TOTAL_MS = TIME_LIMIT_MIN * 60000;
+let items = [], startAt = 0, deadline = 0, tid = 0, done = false, name = "";
+
+$("f1").textContent = Q.length + " questions";
+$("f2").textContent = TIME_LIMIT_MIN + " minutes";
+$("clock").textContent = fmt(TOTAL_MS);
+
+function fmt(ms){ const s = Math.ceil(ms/1000); return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0"); }
+function shuffle(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function rich(el, text){
+  text.split(/(<[^>]+>|\b[a-z-]+="[^"]*")/g).forEach((p,i) => {
+    if(i % 2){ const c = document.createElement("code"); c.textContent = p; el.appendChild(c); }
+    else if(p){ el.appendChild(document.createTextNode(p)); }
+  });
+}
+
+function begin(){
+  name = $("name").value.trim();
+  if(!name){ $("err").textContent = "Enter your full name to start."; $("name").focus(); return; }
+  items = shuffle(Q).map(q => ({q, opts: shuffle(q.o.map((t,i) => ({t, ok: i === q.a}))), pick: -1}));
+  const form = $("quiz");
+  items.forEach((it, qi) => {
+    const fs = document.createElement("fieldset");
+    const lg = document.createElement("legend");
+    lg.appendChild(document.createTextNode((qi+1) + ". "));
+    rich(lg, it.q.q);
+    fs.appendChild(lg);
+    it.opts.forEach((o, oi) => {
+      const lb = document.createElement("label"); lb.className = "opt";
+      const inp = document.createElement("input"); inp.type = "radio"; inp.name = "q" + qi;
+      inp.addEventListener("change", () => { it.pick = oi; progress(); });
+      const sp = document.createElement("span"); rich(sp, o.t);
+      lb.appendChild(inp); lb.appendChild(sp); fs.appendChild(lb);
+    });
+    form.appendChild(fs);
+  });
+  const sb = document.createElement("button"); sb.type = "button"; sb.textContent = "Submit my answers";
+  sb.addEventListener("click", () => finish(false));
+  form.appendChild(sb);
+  $("start").hidden = true; $("quiz").hidden = false; $("bar").hidden = false;
+  progress();
+  startAt = Date.now(); deadline = startAt + TOTAL_MS;
+  tick(); tid = setInterval(tick, 500);
+  window.scrollTo(0,0);
+}
+
+function progress(){ const n = items.filter(i => i.pick >= 0).length; $("progress").textContent = n + " of " + items.length + " answered"; }
+
+function tick(){
+  const left = Math.max(0, deadline - Date.now());
+  $("clock").textContent = fmt(left);
+  $("fill").style.width = ((1 - left/TOTAL_MS) * 100) + "%";
+  const warn = left <= 60000;
+  $("clock").classList.toggle("warn", warn);
+  $("fill").classList.toggle("warn", warn);
+  if(left === 0) finish(true);
+}
+
+function finish(auto){
+  if(done) return; done = true; clearInterval(tid);
+  const used = Math.min(TOTAL_MS, Date.now() - startAt);
+  let score = 0; const missed = [];
+  items.forEach(it => { if(it.pick >= 0 && it.opts[it.pick].ok) score++; else missed.push(it.q.t); });
+  const n = items.length, pct = Math.round(score / n * 100);
+  $("rtitle").textContent = auto ? "Time is up" : "Quiz finished";
+  $("rscore").textContent = score + " / " + n;
+  $("rmeta").textContent = name + ", " + pct + "%. Time used: " + fmt(used) + (auto ? " (time ran out)." : ".");
+  const lines = [QUIZ_TITLE, "Name: " + name, "Score: " + score + "/" + n + " (" + pct + "%)", "Time used: " + fmt(used) + (auto ? " (time ran out)" : ""), "Topics missed: " + (missed.length ? missed.join(", ") : "none")];
+  const msg = lines.join("\n");
+  $("rmsg").textContent = msg;
+  $("wa").href = "https://wa.me/" + TEACHER_NUMBER + "?text=" + encodeURIComponent(msg);
+  const subj = QUIZ_TITLE + " result: " + name;
+  const det = items.map((it, qi) => {
+    const picked = it.pick >= 0 ? it.opts[it.pick].t : "(no answer)";
+    const right = it.pick >= 0 && it.opts[it.pick].ok;
+    return (qi+1) + ". " + it.q.q + "\nStudent answer: " + picked + "\nResult: " + (right ? "Correct" : "Incorrect, right answer: " + it.opts.find(o => o.ok).t);
+  }).join("\n\n");
+  const body = msg + "\n\nQuestion by question:\n\n" + det;
+  $("em").href = "mailto:" + TEACHER_EMAIL + "?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body);
+  $("gm").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(TEACHER_EMAIL) + "&su=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body);
+  window.lastBody = body;
+  $("rmsg").textContent = body;
+  const rv = $("review");
+  items.forEach((it, qi) => {
+    const right = it.pick >= 0 && it.opts[it.pick].ok;
+    const d = document.createElement("div"); d.className = "rev " + (right ? "ok" : "no");
+    const h = document.createElement("p"); const b = document.createElement("b");
+    b.className = right ? "ok" : "no"; b.textContent = right ? "Correct. " : (it.pick < 0 ? "Not answered. " : "Incorrect. ");
+    h.appendChild(b); h.appendChild(document.createTextNode((qi+1) + ". ")); rich(h, it.q.q); d.appendChild(h);
+    if(!right){
+      const p1 = document.createElement("p"); p1.appendChild(document.createTextNode("Right answer: "));
+      rich(p1, it.opts.find(o => o.ok).t); d.appendChild(p1);
+    }
+    const p2 = document.createElement("p"); p2.className = "muted"; rich(p2, it.q.e); d.appendChild(p2);
+    rv.appendChild(d);
+  });
+  $("quiz").hidden = true; $("bar").hidden = true; $("result").hidden = false;
+  window.scrollTo(0,0);
+}
+
+function copyResult(){
+  const t = window.lastBody || ""; let ok = false;
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy"); document.body.removeChild(ta);
+  }catch(e){}
+  $("cstat").textContent = ok ? "Result copied. Paste it into WhatsApp or your email, then press send." : "Copy was blocked. Select the text in the box above, copy it, and paste it into WhatsApp or your email.";
+}
+$("cp").addEventListener("click", copyResult);
+["wa", "em", "gm"].forEach(id => $(id).addEventListener("click", copyResult));
+$("go").addEventListener("click", begin);
+$("name").addEventListener("keydown", e => { if(e.key === "Enter") begin(); });
+</script>
+</body>
+</html>
